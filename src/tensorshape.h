@@ -4,10 +4,12 @@
 #include <vector>
 #include <cstdlib>
 
+#include "tensor_config.h"
+
 namespace tensor
 {
 
-class TensorShape
+class TENSOR_API TensorShape
 {
     friend class Tensor;
 public:
@@ -96,7 +98,7 @@ TensorShape::TensorShape(Integer* shape_values, Integer* stride_values, const in
 template<class Container1, class Container2>
 void TensorShape::assign_shape(const Container1& shape_data, const Container2& stride_data)
 {
-    for(size_t i=0; i<m_num_dims; ++i)
+    for(int64_t i=0; i<m_num_dims; ++i)
     {
         m_shape[i] = shape_data[i];
         m_strides[i] = stride_data[i];

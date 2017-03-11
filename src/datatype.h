@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <inttypes.h>
 
+#include "tensor_config.h"
+
 namespace tensor
 {
 

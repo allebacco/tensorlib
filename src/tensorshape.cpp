@@ -1,6 +1,8 @@
 #include "tensorshape.h"
 
 #include <algorithm>
+#include <numeric>
+
 
 using namespace tensor;
 
@@ -65,7 +67,7 @@ TensorShape& TensorShape::operator=(TensorShape&& other)
 
 int64_t TensorShape::size() const
 {
-    return std::accumulate(m_shape, m_shape + m_num_dims, 1, std::multiplies<int64_t>());
+    return std::accumulate(m_shape, m_shape + m_num_dims, static_cast<int64_t>(1L), std::multiplies<int64_t>());
 }
 
 bool TensorShape::is_equal(const TensorShape& other) const

@@ -1,15 +1,14 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
+#include "tensor_config.h"
 #include "datatype_conversion.h"
 #include "tensorshape.h"
 
 namespace tensor
 {
 
-
-
-class Tensor
+class TENSOR_API Tensor
 {
 public:
     Tensor();

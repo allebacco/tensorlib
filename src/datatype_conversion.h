@@ -1,6 +1,7 @@
 #ifndef DATATYPE_CONVERSION_H
 #define DATATYPE_CONVERSION_H
 
+#include "tensor_config.h"
 #include "datatype.h"
 #include "internal/datatype_conversion_p.h"
 
