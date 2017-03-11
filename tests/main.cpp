@@ -3,6 +3,7 @@
 
 #include "test_datatype.h"
 #include "test_tensorshape.h"
+#include "test_tensor.h"
 
 
 

@@ -7,9 +7,9 @@
 namespace tensor
 {
 
-
 class TensorShape
 {
+    friend class Tensor;
 public:
     TensorShape();
 
@@ -36,9 +36,15 @@ public:
     int64_t stride(const int64_t index) const { return m_strides[index]; }
     int64_t operator[](const int64_t index) const { return shape(index); }
 
-private:
+    bool is_equal(const TensorShape& other) const;
 
-    void init_num_dims(const int64_t num_dims);
+protected:
+
+    TensorShape(const int64_t num_dims);
+
+    void set_ndim(const int64_t num_dims);
+    void set_shape(const int64_t index, int64_t value);
+    void set_stride(const int64_t index, int64_t value);
 
     template<class Container1, class Container2>
     void assign_shape(const Container1& shape_data, const Container2& stride_data);
@@ -52,10 +58,22 @@ private:
 };
 
 
+static bool operator==(const TensorShape& ts1, const TensorShape& ts2)
+{
+    return ts1.is_equal(ts2);
+}
+
+static bool operator!=(const TensorShape& ts1, const TensorShape& ts2)
+{
+    return !(ts1==ts2);
+}
+
+
+
 template<typename Integer, typename>
 TensorShape::TensorShape(std::initializer_list<Integer> shape_values)
 {
-    init_num_dims(shape_values.size());
+    set_ndim(shape_values.size());
     assign_shape(shape_values.begin(), shape_values.begin());
 }
 
@@ -63,14 +81,14 @@ TensorShape::TensorShape(std::initializer_list<Integer> shape_values)
 template<typename Integer, typename>
 TensorShape::TensorShape(Integer* shape_values, const int64_t num_dims)
 {
-   init_num_dims(num_dims);
+   set_ndim(num_dims);
    assign_shape(shape_values, shape_values);
 }
 
 template<typename Integer, typename>
 TensorShape::TensorShape(Integer* shape_values, Integer* stride_values, const int64_t num_dims)
 {
-    init_num_dims(num_dims);
+    set_ndim(num_dims);
     assign_shape(shape_values, stride_values);
 }
 

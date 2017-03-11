@@ -2,6 +2,7 @@
 #define DATATYPE_H
 
 #include <type_traits>
+#include <inttypes.h>
 
 namespace tensor
 {
@@ -17,6 +18,28 @@ enum class DataType
     User = 255
 };
 
+
+static int64_t size_of(const DataType type)
+{
+    switch (type) {
+    case DataType::Int8:
+    case DataType::Uint8:
+        return sizeof(int8_t);
+    case DataType::Int16:
+    case DataType::Uint16:
+        return sizeof(int16_t);
+    case DataType::Int32:
+    case DataType::Uint32:
+    case DataType::Float32:
+        return sizeof(int32_t);
+    case DataType::Int64:
+    case DataType::Uint64:
+    case DataType::Float64:
+        return sizeof(int64_t);
+    default:
+        return sizeof(void*);
+    }
+}
 
 }
 

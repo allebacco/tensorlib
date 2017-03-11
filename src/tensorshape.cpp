@@ -4,6 +4,7 @@
 
 using namespace tensor;
 
+
 TensorShape::TensorShape():
     m_internal_data(2),
     m_num_dims(1)
@@ -67,7 +68,17 @@ int64_t TensorShape::size() const
     return std::accumulate(m_shape, m_shape + m_num_dims, 1, std::multiplies<int64_t>());
 }
 
-void TensorShape::init_num_dims(const int64_t num_dims)
+bool TensorShape::is_equal(const TensorShape& other) const
+{
+    return m_internal_data == other.m_internal_data;
+}
+
+TensorShape::TensorShape(const int64_t num_dims)
+{
+    set_ndim(num_dims);
+}
+
+void TensorShape::set_ndim(const int64_t num_dims)
 {
     m_num_dims = num_dims;
     m_internal_data.resize(num_dims * 2);
@@ -75,3 +86,12 @@ void TensorShape::init_num_dims(const int64_t num_dims)
     m_strides = &m_internal_data[num_dims];
 }
 
+void TensorShape::set_shape(const int64_t index, int64_t value)
+{
+    m_shape[index] = value;
+}
+
+void TensorShape::set_stride(const int64_t index, int64_t value)
+{
+    m_strides[index] = value;
+}

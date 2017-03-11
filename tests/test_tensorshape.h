@@ -167,4 +167,20 @@ TEST(TensorShape, MoveOperator)
 }
 
 
+// Test the equal operator
+TEST(TensorShape, EqualOperator)
+{
+    TensorShape other({1, 2, 3});
+    TensorShape ts = other;
+    EXPECT_EQ(ts, other);
+
+    ts = TensorShape({1, 2, 3, 4});
+    EXPECT_NE(ts, other);
+
+    std::vector<int> shape {1, 2, 3};
+    std::vector<int> stride {4, 5, 6};
+    ts = TensorShape(shape.data(), stride.data(), shape.size());
+    EXPECT_NE(ts, other);
+}
+
 #endif // TEST_TENSORSHAPE_H
