@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "test_datatype.h"
-
+#include "test_tensorshape.h"
 
 
 
