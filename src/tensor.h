@@ -15,14 +15,13 @@ public:
 
     Tensor(const int64_t size, const DataType type);
 
-    template<typename _Tp>
-    Tensor(const int64_t size);
+    Tensor(const int64_t size, const int64_t el_size, const DataType type=DataType::User);
 
     template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
     Tensor(std::initializer_list<Integer> shape_values, const DataType type);
 
-    template<typename _Tp, typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
-    Tensor(std::initializer_list<Integer> shape_values);
+    template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
+    Tensor(std::initializer_list<Integer> shape_values, const int64_t el_size, const DataType type=DataType::User);
 
     ~Tensor();
 
@@ -33,10 +32,11 @@ public:
     _Tp* data() { return reinterpret_cast<_Tp*>(m_data); }
 
     const TensorShape& shape() const { return m_shape; }
-    const int64_t size() const { return m_shape.size(); }
-    const int64_t ndim() const { return m_shape.ndim(); }
+    int64_t size() const { return m_shape.size(); }
+    int64_t ndim() const { return m_shape.ndim(); }
     DataType dtype() const { return m_dtype; }
     bool is_own_data() const { return m_own_data; }
+    int64_t element_size() const { return m_element_size; }
 
 private:
 
@@ -44,20 +44,9 @@ private:
     TensorShape m_shape;
     DataType m_dtype = DataType::Void;
     bool m_own_data = true;
+    int64_t m_element_size = 0;
 };
 
-
-template<typename _Tp>
-Tensor::Tensor(const int64_t size):
-    m_data(nullptr),
-    m_shape(TensorShape({size})),
-    m_dtype(type_to_dtype<_Tp>::value),
-    m_own_data(true)
-{
-    m_dtype = type_to_dtype<_Tp>::value;
-    const int64_t allocation_size = size * sizeof(_Tp);
-    m_data = new uint8_t[allocation_size];
-}
 
 
 template<typename Integer, typename>
@@ -65,21 +54,23 @@ Tensor::Tensor(std::initializer_list<Integer> shape_values, const DataType type)
     m_data(nullptr),
     m_shape(TensorShape(shape_values)),
     m_dtype(type),
-    m_own_data(true)
+    m_own_data(true),
+    m_element_size(size_of(type))
 {
-    const int64_t allocation_size = m_shape.size() * size_of(type);
+    const int64_t allocation_size = m_shape.size() * m_element_size;
     m_data = new uint8_t[allocation_size];
 }
 
 
-template<typename _Tp, typename Integer, typename>
-Tensor::Tensor(std::initializer_list<Integer> shape_values):
+template<typename Integer, typename>
+Tensor::Tensor(std::initializer_list<Integer> shape_values, const int64_t el_size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape(shape_values)),
-    m_dtype(type_to_dtype<_Tp>::value),
-    m_own_data(true)
+    m_dtype(type),
+    m_own_data(true),
+    m_element_size(el_size)
 {
-    const int64_t allocation_size = m_shape.size() * sizeof(_Tp);
+    const int64_t allocation_size = m_shape.size() * m_element_size;
     m_data = new uint8_t[allocation_size];
 }
 
