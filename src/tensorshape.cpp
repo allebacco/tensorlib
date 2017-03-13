@@ -8,45 +8,30 @@ using namespace tensor;
 
 
 TensorShape::TensorShape():
-    m_internal_data(2),
-    m_num_dims(1)
+    m_shape(1)
 {
-    m_internal_data[0] = 0;
-    m_shape = &m_internal_data[0];
-    m_strides = &m_internal_data[m_num_dims];
+    m_shape[0] = 0;
 }
 
 TensorShape::TensorShape(const TensorShape& other) :
-    m_num_dims(other.m_num_dims),
-    m_internal_data(other.m_internal_data)
+    m_shape(other.m_shape)
 {
-    m_shape = &m_internal_data[0];
-    m_strides = &m_internal_data[m_num_dims];
 }
 
 TensorShape::TensorShape(TensorShape&& other) :
-    m_num_dims(other.m_num_dims)
+    m_shape(other.m_shape)
 {
-    std::swap(m_internal_data, other.m_internal_data);
-    m_shape = &m_internal_data[0];
-    m_strides = &m_internal_data[m_num_dims];
 }
 
 TensorShape::~TensorShape()
 {
-    m_shape = nullptr;
-    m_strides = nullptr;
-    m_num_dims = 0;
 }
 
 TensorShape& TensorShape::operator=(const TensorShape& other)
 {
     if (this != &other)
     {
-        m_num_dims = other.m_num_dims;
-        m_internal_data = other.m_internal_data;
-        m_shape = &m_internal_data[0];
-        m_strides = &m_internal_data[m_num_dims];
+        m_shape = other.m_shape;
     }
     return *this;
 }
@@ -56,10 +41,7 @@ TensorShape& TensorShape::operator=(TensorShape&& other)
 {
     if (this != &other)
     {
-        m_num_dims = other.m_num_dims;
-        std::swap(m_internal_data, other.m_internal_data);
-        m_shape = &m_internal_data[0];
-        m_strides = &m_internal_data[m_num_dims];
+        std::swap(m_shape, other.m_shape);
     }
     return *this;
 }
@@ -67,12 +49,22 @@ TensorShape& TensorShape::operator=(TensorShape&& other)
 
 int64_t TensorShape::size() const
 {
-    return std::accumulate(m_shape, m_shape + m_num_dims, static_cast<int64_t>(1L), std::multiplies<int64_t>());
+    return std::accumulate(m_shape.begin(), m_shape.end(), static_cast<int64_t>(1L), std::multiplies<int64_t>());
 }
 
 bool TensorShape::is_equal(const TensorShape& other) const
 {
-    return m_internal_data == other.m_internal_data;
+    return m_shape == other.m_shape;
+}
+
+TensorStride TensorShape::from_shape_and_size(const TensorShape& shape, const int64_t element_size)
+{
+    TensorStride ts(shape);
+    const int num_dims = shape.ndim();
+    for(int i=0; i<num_dims; ++i)
+        ts.m_shape[i] *= element_size;
+
+    return ts;
 }
 
 TensorShape::TensorShape(const int64_t num_dims)
@@ -82,18 +74,10 @@ TensorShape::TensorShape(const int64_t num_dims)
 
 void TensorShape::set_ndim(const int64_t num_dims)
 {
-    m_num_dims = num_dims;
-    m_internal_data.resize(num_dims * 2);
-    m_shape = &m_internal_data[0];
-    m_strides = &m_internal_data[num_dims];
+    m_shape.resize(num_dims);
 }
 
 void TensorShape::set_shape(const int64_t index, int64_t value)
 {
     m_shape[index] = value;
-}
-
-void TensorShape::set_stride(const int64_t index, int64_t value)
-{
-    m_strides[index] = value;
 }

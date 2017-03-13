@@ -16,7 +16,6 @@ TEST(TensorShape, DefaultConstructor)
     EXPECT_EQ(ts.ndim(), 1);
 
     EXPECT_EQ(ts.shape(0), 0);
-    EXPECT_EQ(ts.stride(0), 0);
 
     EXPECT_EQ(ts[0], 0);
 }
@@ -33,10 +32,6 @@ TEST(TensorShape, InitializerListConstructor)
     EXPECT_EQ(ts.shape(0), 1);
     EXPECT_EQ(ts.shape(1), 2);
     EXPECT_EQ(ts.shape(2), 3);
-
-    EXPECT_EQ(ts.stride(0), 1);
-    EXPECT_EQ(ts.stride(1), 2);
-    EXPECT_EQ(ts.stride(2), 3);
 
     EXPECT_EQ(ts[0], 1);
     EXPECT_EQ(ts[1], 2);
@@ -57,10 +52,6 @@ TEST(TensorShape, ShapeConstructor)
     EXPECT_EQ(ts.shape(1), 2);
     EXPECT_EQ(ts.shape(2), 3);
 
-    EXPECT_EQ(ts.stride(0), 1);
-    EXPECT_EQ(ts.stride(1), 2);
-    EXPECT_EQ(ts.stride(2), 3);
-
     EXPECT_EQ(ts[0], 1);
     EXPECT_EQ(ts[1], 2);
     EXPECT_EQ(ts[2], 3);
@@ -71,8 +62,7 @@ TEST(TensorShape, ShapeConstructor)
 TEST(TensorShape, ShapeStrideConstructor)
 {
     std::vector<int> shape {1, 2, 3};
-    std::vector<int> stride {4, 5, 6};
-    TensorShape ts(shape.data(), stride.data(), shape.size());
+    TensorShape ts(shape.data(), shape.size());
 
     EXPECT_EQ(ts.size(), 1*2*3);
     EXPECT_EQ(ts.ndim(), 3);
@@ -80,10 +70,6 @@ TEST(TensorShape, ShapeStrideConstructor)
     EXPECT_EQ(ts.shape(0), 1);
     EXPECT_EQ(ts.shape(1), 2);
     EXPECT_EQ(ts.shape(2), 3);
-
-    EXPECT_EQ(ts.stride(0), 4);
-    EXPECT_EQ(ts.stride(1), 5);
-    EXPECT_EQ(ts.stride(2), 6);
 
     EXPECT_EQ(ts[0], 1);
     EXPECT_EQ(ts[1], 2);
@@ -103,7 +89,6 @@ TEST(TensorShape, CopyConstructor)
     for(int i=0; i<ts.ndim(); ++i)
     {
         EXPECT_EQ(ts.shape(i), other.shape(i));
-        EXPECT_EQ(ts.stride(i), other.stride(i));
         EXPECT_EQ(ts[i], other[i]);
     }
 }
@@ -122,7 +107,6 @@ TEST(TensorShape, MoveConstructor)
     for(int i=0; i<ts.ndim(); ++i)
     {
         EXPECT_EQ(ts.shape(i), reference.shape(i));
-        EXPECT_EQ(ts.stride(i), reference.stride(i));
         EXPECT_EQ(ts[i], reference[i]);
     }
 }
@@ -141,7 +125,6 @@ TEST(TensorShape, CopyOperator)
     for(int i=0; i<ts.ndim(); ++i)
     {
         EXPECT_EQ(ts.shape(i), other.shape(i));
-        EXPECT_EQ(ts.stride(i), other.stride(i));
         EXPECT_EQ(ts[i], other[i]);
     }
 }
@@ -161,7 +144,6 @@ TEST(TensorShape, MoveOperator)
     for(int i=0; i<ts.ndim(); ++i)
     {
         EXPECT_EQ(ts.shape(i), reference.shape(i));
-        EXPECT_EQ(ts.stride(i), reference.stride(i));
         EXPECT_EQ(ts[i], reference[i]);
     }
 }
@@ -178,9 +160,8 @@ TEST(TensorShape, EqualOperator)
     EXPECT_NE(ts, other);
 
     std::vector<int> shape {1, 2, 3};
-    std::vector<int> stride {4, 5, 6};
-    ts = TensorShape(shape.data(), stride.data(), shape.size());
-    EXPECT_NE(ts, other);
+    ts = TensorShape(shape.data(), shape.size());
+    EXPECT_EQ(ts, other);
 }
 
 #endif // TEST_TENSORSHAPE_H

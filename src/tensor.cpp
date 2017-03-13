@@ -8,13 +8,15 @@ Tensor::Tensor():
     m_data(nullptr),
     m_shape(TensorShape()),
     m_dtype(DataType::Void),
-    m_element_size(1)
+    m_element_size(1),
+    m_stride(TensorStride())
 {
 }
 
 Tensor::Tensor(const int64_t size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape({size})),
+    m_stride({size*size_of(type)}),
     m_dtype(type),
     m_element_size(size_of(type))
 {
@@ -25,6 +27,7 @@ Tensor::Tensor(const int64_t size, const DataType type):
 Tensor::Tensor(const int64_t size, const int64_t el_size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape({size})),
+    m_stride({size*el_size}),
     m_dtype(type),
     m_element_size(el_size)
 {
@@ -35,6 +38,7 @@ Tensor::Tensor(const int64_t size, const int64_t el_size, const DataType type):
 Tensor::Tensor(const TensorShape& size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape(size)),
+    m_stride(TensorStride::from_shape_and_size(size, size_of(type))),
     m_dtype(type),
     m_element_size(size_of(type))
 {
@@ -45,6 +49,7 @@ Tensor::Tensor(const TensorShape& size, const DataType type):
 Tensor::Tensor(const TensorShape& size, const int64_t el_size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape(size)),
+    m_stride(TensorStride::from_shape_and_size(size, size_of(type))),
     m_dtype(type),
     m_element_size(el_size)
 {
@@ -57,7 +62,8 @@ Tensor::Tensor(const Tensor& other):
     m_data(other.m_data),
     m_shape(other.m_shape),
     m_dtype(other.m_dtype),
-    m_element_size(other.m_element_size)
+    m_element_size(other.m_element_size),
+    m_stride(m_stride)
 {
 }
 
@@ -67,7 +73,8 @@ Tensor::Tensor(Tensor&& other):
     m_data(other.m_data),
     m_shape(std::move(other.m_shape)),
     m_dtype(other.m_dtype),
-    m_element_size(other.m_element_size)
+    m_element_size(other.m_element_size),
+    m_stride(m_stride)
 {
 }
 
@@ -86,6 +93,7 @@ Tensor& Tensor::operator=(const Tensor& other)
         m_shape = other.m_shape;
         m_dtype = other.m_dtype;
         m_element_size = other.m_element_size;
+        m_stride = other.m_stride;
     }
 
     return *this;
@@ -100,7 +108,22 @@ Tensor& Tensor::operator=(Tensor&& other)
         m_shape = std::move(other.m_shape);
         m_dtype = other.m_dtype;
         m_element_size = other.m_element_size;
+        m_stride = std::move(other.m_stride);
     }
 
     return *this;
 }
+
+/*
+Tensor Tensor::clone() const
+{
+    m_data
+
+#define PyArray_GETPTR4(obj, i, j, k, l) ((void *)(PyArray_BYTES(obj) + \
+                                            (i)*PyArray_STRIDES(obj)[0] + \
+                                            (j)*PyArray_STRIDES(obj)[1] + \
+                                            (k)*PyArray_STRIDES(obj)[2] + \
+                                            (l)*PyArray_STRIDES(obj)[3]))
+}
+
+*/
