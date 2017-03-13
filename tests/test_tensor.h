@@ -196,10 +196,11 @@ TEST(Tensor, CopyConstructor)
     Tensor t(other);
     EXPECT_EQ(t.shape(), other.shape());
     EXPECT_NE(t.data<int32_t>(), nullptr);
-    EXPECT_NE(t.data<int32_t>(), other.data<int32_t>());
+    EXPECT_EQ(t.data<int32_t>(), other.data<int32_t>());
     EXPECT_EQ(t.dtype(), other.dtype());
     EXPECT_EQ(t.size(), other.size());
     EXPECT_EQ(t.is_own_data(), other.is_own_data());
+    EXPECT_FALSE(t.is_own_data());
     EXPECT_EQ(t.element_size(), other.element_size());
 }
 
@@ -216,6 +217,7 @@ TEST(Tensor, MoveConstructor)
     EXPECT_EQ(t.dtype(), other.dtype());
     EXPECT_EQ(t.size(), other.size());
     EXPECT_EQ(t.is_own_data(), other.is_own_data());
+    EXPECT_TRUE(t.is_own_data());
     EXPECT_EQ(t.element_size(), other.element_size());
 }
 
@@ -233,6 +235,7 @@ TEST(Tensor, CopyOperator)
     EXPECT_EQ(t.dtype(), other.dtype());
     EXPECT_EQ(t.size(), other.size());
     EXPECT_EQ(t.is_own_data(), other.is_own_data());
+    EXPECT_FALSE(t.is_own_data());
     EXPECT_EQ(t.element_size(), other.element_size());
 }
 
@@ -247,10 +250,11 @@ TEST(Tensor, MoveOperator)
     t = std::move(ref);
     EXPECT_EQ(t.shape(), other.shape());
     EXPECT_NE(t.data<int32_t>(), nullptr);
-    EXPECT_NE(t.data<int32_t>(), other.data<int32_t>());
+    EXPECT_EQ(t.data<int32_t>(), other.data<int32_t>());
     EXPECT_EQ(t.dtype(), other.dtype());
     EXPECT_EQ(t.size(), other.size());
     EXPECT_EQ(t.is_own_data(), other.is_own_data());
+    EXPECT_FALSE(t.is_own_data());
     EXPECT_EQ(t.element_size(), other.element_size());
 }
 

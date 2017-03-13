@@ -12,7 +12,6 @@ Tensor::Tensor(std::initializer_list<Integer> size, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape(size)),
     m_dtype(type),
-    m_own_data(true),
     m_element_size(size_of(type))
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);
@@ -25,7 +24,6 @@ Tensor::Tensor(std::initializer_list<Integer> size, const int64_t el_size, const
     m_data(nullptr),
     m_shape(TensorShape(size)),
     m_dtype(type),
-    m_own_data(true),
     m_element_size(el_size)
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);
@@ -38,7 +36,6 @@ Tensor::Tensor(const Integer* size, const int64_t ndim, const DataType type):
     m_data(nullptr),
     m_shape(TensorShape(size, ndim)),
     m_dtype(type),
-    m_own_data(true),
     m_element_size(size_of(type))
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);
@@ -51,7 +48,6 @@ Tensor::Tensor(const Integer* size, const int64_t ndim, const int64_t el_size, c
     m_data(nullptr),
     m_shape(TensorShape(size, ndim)),
     m_dtype(type),
-    m_own_data(true),
     m_element_size(el_size)
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);

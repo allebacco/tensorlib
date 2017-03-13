@@ -54,7 +54,7 @@ public:
     int64_t size() const { return m_shape.size(); }
     int64_t ndim() const { return m_shape.ndim(); }
     DataType dtype() const { return m_dtype; }
-    bool is_own_data() const { return m_own_data; }
+    bool is_own_data() const { return m_shared_data.use_count()==1; }
     int64_t element_size() const { return m_element_size; }
 
 protected:
@@ -65,7 +65,6 @@ private:
     uint8_t* m_data;
     TensorShape m_shape;
     DataType m_dtype = DataType::Void;
-    bool m_own_data = true;
     int64_t m_element_size = 0;
 };
 
