@@ -14,7 +14,7 @@ include_directories(${CMAKE_MODULE_PATH}/src)
 
 link_directories(${GTEST_LIB_DIR})
 
-set(TEST_SOURCES main.cpp test_datatype.h common.h test_tensorshape.h test_tensor.h)
+set(TEST_SOURCES main.cpp test_datatype.h common.h test_tensorshape.h test_tensor.h test_tensordata.h)
 add_executable(tensor_test ${TEST_SOURCES})
 target_link_libraries(tensor_test LINK_PUBLIC tensor ${GTEST_LIBRARIES} ${OS_LIBRARIES})
 add_test(AllTests tensor_test)

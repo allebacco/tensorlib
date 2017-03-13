@@ -229,7 +229,7 @@ TEST(Tensor, CopyOperator)
     t = other;
     EXPECT_EQ(t.shape(), other.shape());
     EXPECT_NE(t.data<int32_t>(), nullptr);
-    EXPECT_NE(t.data<int32_t>(), other.data<int32_t>());
+    EXPECT_EQ(t.data<int32_t>(), other.data<int32_t>());
     EXPECT_EQ(t.dtype(), other.dtype());
     EXPECT_EQ(t.size(), other.size());
     EXPECT_EQ(t.is_own_data(), other.is_own_data());

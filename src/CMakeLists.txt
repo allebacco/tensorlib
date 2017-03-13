@@ -10,9 +10,9 @@ endif(UNIX)
 #set(CMAKE_BUILD_TYPE Release)
 
 
-set(HEADER_SRC tensor.h datatype.h datatype_conversion.h tensorshape.h tensor_config.h)
+set(HEADER_SRC tensor.h datatype.h datatype_conversion.h tensorshape.h tensor_config.h tensordata.h)
 set(HEADER_PRIVATE_SRC internal/datatype_conversion_p.h internal/tensor_p.h)
-set(SOURCES_SRC tensor.cpp tensorshape.cpp)
+set(SOURCES_SRC tensor.cpp tensorshape.cpp tensordata.cpp)
 
 set(SOURCES ${HEADER_SRC} ${SOURCES_SRC} ${HEADER_PRIVATE_SRC})
 

@@ -4,6 +4,8 @@
 #include "tensor_config.h"
 #include "datatype_conversion.h"
 #include "tensorshape.h"
+#include "tensordata.h"
+
 
 namespace tensor
 {
@@ -57,12 +59,10 @@ public:
 
 protected:
 
-    virtual void allocate();
-    virtual void deallocate();
-
 private:
 
-    uint8_t* m_data = nullptr;
+    TensorSharedData m_shared_data;
+    uint8_t* m_data;
     TensorShape m_shape;
     DataType m_dtype = DataType::Void;
     bool m_own_data = true;
