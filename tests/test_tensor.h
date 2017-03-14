@@ -1,6 +1,9 @@
 #ifndef TEST_TENSOR_H
 #define TEST_TENSOR_H
 
+#include <algorithm>
+#include <numeric>
+
 #include "common.h"
 
 #include "tensor.h"
@@ -8,6 +11,7 @@
 using tensor::Tensor;
 using tensor::TensorShape;
 using tensor::DataType;
+using tensor::dtype_to_type;
 
 
 // Test the Tensor default constructor
@@ -258,5 +262,35 @@ TEST(Tensor, MoveOperator)
     EXPECT_EQ(t.element_size(), other.element_size());
 }
 
+
+
+// Test the Tensor indexing using initializer list
+TEST(Tensor, IndexingInitializerList2x2)
+{
+    Tensor ts({2, 2}, DataType::Int32);
+    std::vector<int32_t> values {1, 2, 3, 4};
+    memcpy(ts.data<int32_t>(), values.data(), sizeof(int32_t)*values.size());
+
+    int index = 0;
+    for(int x=0; x<ts.shape(0); ++x)
+        for(int y=0; y<ts.shape(1); ++y, ++index)
+            EXPECT_EQ(ts.ptr<int32_t>({x, y})[0], values[index]);
+}
+
+
+// Test the Tensor indexing using initializer list
+TEST(Tensor, IndexingInitializerList2x3x4)
+{
+    Tensor ts({2, 3, 4}, DataType::Int32);
+    std::vector<int32_t> values(2*3*4);
+    std::iota(values.begin(), values.end(), 0);
+    memcpy(ts.data<int32_t>(), values.data(), sizeof(int32_t)*values.size());
+
+    int index = 0;
+    for(int x=0; x<ts.shape(0); ++x)
+        for(int y=0; y<ts.shape(1); ++y)
+            for(int z=0; z<ts.shape(2); ++z, ++index)
+                EXPECT_EQ(ts.ptr<int32_t>({x, y, z})[0], values[index]);
+}
 
 #endif // TEST_TENSOR_H

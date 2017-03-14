@@ -1,5 +1,8 @@
 #include "tensor.h"
 
+#include <algorithm>
+#include <numeric>
+
 using namespace tensor;
 
 
@@ -15,24 +18,24 @@ Tensor::Tensor():
 
 Tensor::Tensor(const int64_t size, const DataType type):
     m_data(nullptr),
-    m_shape(TensorShape({size})),
-    m_stride({size*size_of(type)}),
+    m_shape({size}),
     m_dtype(type),
     m_element_size(size_of(type))
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);
     m_data = m_shared_data->data();
+    m_stride = TensorStride::from_shape_and_size(m_shape, m_element_size);
 }
 
 Tensor::Tensor(const int64_t size, const int64_t el_size, const DataType type):
     m_data(nullptr),
-    m_shape(TensorShape({size})),
-    m_stride({size*el_size}),
+    m_shape({size}),
     m_dtype(type),
     m_element_size(el_size)
 {
     m_shared_data = TensorData::make_shared(m_shape.size() * m_element_size);
     m_data = m_shared_data->data();
+    m_stride = TensorStride::from_shape_and_size(m_shape, m_element_size);
 }
 
 Tensor::Tensor(const TensorShape& size, const DataType type):
@@ -74,7 +77,7 @@ Tensor::Tensor(Tensor&& other):
     m_shape(std::move(other.m_shape)),
     m_dtype(other.m_dtype),
     m_element_size(other.m_element_size),
-    m_stride(m_stride)
+    m_stride(std::move(m_stride))
 {
 }
 
@@ -114,16 +117,23 @@ Tensor& Tensor::operator=(Tensor&& other)
     return *this;
 }
 
-/*
-Tensor Tensor::clone() const
+Tensor Tensor::view(const Slice& slice) const
 {
-    m_data
+    Tensor result(*this);
 
-#define PyArray_GETPTR4(obj, i, j, k, l) ((void *)(PyArray_BYTES(obj) + \
-                                            (i)*PyArray_STRIDES(obj)[0] + \
-                                            (j)*PyArray_STRIDES(obj)[1] + \
-                                            (k)*PyArray_STRIDES(obj)[2] + \
-                                            (l)*PyArray_STRIDES(obj)[3]))
+    const int64_t stop = std::min(slice.stop(), result.shape(0));
+    const int64_t start = std::min(slice.start(), result.shape(0));
+    if(start==stop)
+    {
+        TensorShape new_shape(m_shape);
+        new_shape.set_shape(0, 0);
+        return Tensor(new_shape, m_element_size, m_dtype);
+    }
+
+    result.m_data = result.ptr<uint8_t>({start});
+    result.m_shape.m_shape[0] = stop - start;
+
+    return result;
 }
 
-*/
+

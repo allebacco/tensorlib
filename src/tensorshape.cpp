@@ -59,10 +59,14 @@ bool TensorShape::is_equal(const TensorShape& other) const
 
 TensorStride TensorShape::from_shape_and_size(const TensorShape& shape, const int64_t element_size)
 {
-    TensorStride ts(shape);
     const int num_dims = shape.ndim();
-    for(int i=0; i<num_dims; ++i)
-        ts.m_shape[i] *= element_size;
+    TensorStride ts(num_dims);
+    int64_t num_elements = 1;
+    for(int i=num_dims-1; i>=0; --i)
+    {
+        ts.m_shape[i] = element_size * num_elements;
+        num_elements *= shape.m_shape[i];
+    }
 
     return ts;
 }

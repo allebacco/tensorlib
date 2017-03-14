@@ -31,3 +31,4 @@
 # Qt Creator files
 build
 *.user
+.vscode

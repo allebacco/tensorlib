@@ -5,7 +5,8 @@
 #include "datatype_conversion.h"
 #include "tensorshape.h"
 #include "tensordata.h"
-
+#include "tensor_traits.h"
+#include "slice.h"
 
 namespace tensor
 {
@@ -19,16 +20,16 @@ public:
 
     Tensor(const int64_t size, const int64_t el_size, const DataType type=DataType::User);
 
-    template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
+    template<typename Integer, typename=enable_if_integer_t<Integer>>
     Tensor(std::initializer_list<Integer> size, const DataType type);
 
-    template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
+    template<typename Integer, typename=enable_if_integer_t<Integer>>
     Tensor(std::initializer_list<Integer> size, const int64_t el_size, const DataType type=DataType::User);
 
-    template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
+    template<typename Integer, typename=enable_if_integer_t<Integer>>
     Tensor(const Integer* size, const int64_t ndim, const DataType type);
 
-    template<typename Integer, typename=std::enable_if_t<std::is_integral<Integer>::value>>
+    template<typename Integer, typename=enable_if_integer_t<Integer>>
     Tensor(const Integer* size, const int64_t ndim, const int64_t el_size, const DataType type=DataType::User);
 
     Tensor(const TensorShape& size, const DataType type);
@@ -51,7 +52,9 @@ public:
     _Tp* data() { return reinterpret_cast<_Tp*>(m_data); }
 
     const TensorShape& shape() const { return m_shape; }
+    const int64_t shape(const int64_t index) const { return m_shape[index]; }
     const TensorStride& stride() const { return m_stride; }
+    const int64_t stride(const int64_t index) const { return m_stride[index]; }
     int64_t size() const { return m_shape.size(); }
     int64_t ndim() const { return m_shape.ndim(); }
     DataType dtype() const { return m_dtype; }
@@ -60,17 +63,19 @@ public:
 
     //Tensor clone() const;
 
-    uint8_t* ptr(const int* idx)
-    {
-        int64_t d = ndim();
-        uchar* p = m_data;
+    Tensor view(const Slice& slice) const;
 
-        for(int64_t i=0; i < d; i++)
-        {
-            p += idx[i] * m_stride[i];
-        }
-        return p;
-    }
+    template<typename _Tp, typename Integer, typename=enable_if_integer_t<Integer>>
+    _Tp* ptr(const Integer* indexes);
+
+    template<typename _Tp, typename Integer, typename=enable_if_integer_t<Integer>>
+    const _Tp* ptr(const Integer* indexes) const;
+
+    template<typename _Tp, typename Integer, typename=enable_if_integer_t<Integer>>
+    _Tp* ptr(std::initializer_list<Integer> indexes);
+
+    template<typename _Tp, typename Integer, typename=enable_if_integer_t<Integer>>
+    const _Tp* ptr(std::initializer_list<Integer> indexes) const;
 
 private:
 

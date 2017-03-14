@@ -6,6 +6,8 @@
 #include "common.h"
 
 using tensor::TensorShape;
+using tensor::TensorStride;
+
 
 // Test default constructor
 TEST(TensorShape, DefaultConstructor)
@@ -163,5 +165,25 @@ TEST(TensorShape, EqualOperator)
     ts = TensorShape(shape.data(), shape.size());
     EXPECT_EQ(ts, other);
 }
+
+
+TEST(TensorStride, fromShapeAndElementSize)
+{
+    TensorStride ts = TensorStride::from_shape_and_size(TensorShape({2, 2}), 4);
+    EXPECT_EQ(ts, TensorStride({8, 4}));
+
+    ts = TensorStride::from_shape_and_size(TensorShape({4}), 4);
+    EXPECT_EQ(ts, TensorStride({4}));
+
+    ts = TensorStride::from_shape_and_size(TensorShape({2, 3, 4}), 4);
+    EXPECT_EQ(ts, TensorStride({48, 16, 4}));
+
+    ts = TensorStride::from_shape_and_size(TensorShape({2, 1, 3, 1, 4}), 4);
+    EXPECT_EQ(ts, TensorStride({48, 48, 16, 16, 4}));
+
+    ts = TensorStride::from_shape_and_size(TensorShape({3, 2, 3, 5, 2, 1}), 4);
+    EXPECT_EQ(ts, TensorStride({240, 120, 40, 8, 4, 4}));
+}
+
 
 #endif // TEST_TENSORSHAPE_H
